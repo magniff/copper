@@ -1,4 +1,5 @@
-from copper import Source, Filter, Printer
+from time import sleep
+from copper import Source, Filter, Printer, Apply
 
 
 def numbers():
@@ -6,6 +7,14 @@ def numbers():
     while 1:
         yield n
         n += 1
+
+
+def delay(time):
+    def _delay(x):
+        sleep(time)
+        return x
+
+    return _delay
 
 
 def is_prime(n):
@@ -19,5 +28,7 @@ def is_prime(n):
 
 source = Source(numbers())
 
-pipe0 = source >> Filter(is_prime) >> Printer("Prime number")
+source >> Apply(lambda x: x**2) >> Printer('pipe1')
+source >> Apply(lambda x: x**3) >> Printer('pipe2')
+
 source.emit()

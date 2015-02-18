@@ -1,3 +1,10 @@
+from collections import deque
+from concurrent.futures import ThreadPoolExecutor
+
+
+pool = ThreadPoolExecutor(2)
+
+
 def coroutine(func):
     def _coroutine(*args, **kwargs):
         f = func(*args, **kwargs)
@@ -7,7 +14,43 @@ def coroutine(func):
     return _coroutine
 
 
+@coroutine
+def task_handler(func, cond, sink):
+
+    def _callback(future):
+        result = future.result()
+
+        if cond(result):
+            for treater in sink:
+                treater.send(result)
+
+    while True:
+        item = yield
+        future = pool.submit(func, item)
+        future.add_done_callback(_callback)
+
+
+class Corutine:
+
+    MAX_QUEUE = 10
+
+    def send(self, item):
+        if len(self.queue) < __class__.MAX_QUEUE:
+            self.queue.append(item)
+
+        if not self.handler.gi_running:
+            self.handler.send(self.queue.popleft())
+
+    def close(self):
+        self.handler.close()
+
+    def __init__(self, func, cond, sink):
+        self.queue = deque()
+        self.handler = task_handler(func, cond, sink)
+
+
 class Source:
+
     def __init__(self, iterator):
         self._iterator = iterator
         self._sink = list()
@@ -36,39 +79,11 @@ class Source:
 
 
 class PipelineCell(Source):
+
     def _get_coroutine(self):
-
-        func = self._func
-        cond = self._cond
-
-        @coroutine
-        def _handler():
-            while True:
-                item = yield
-
-                for treater in self._sink:
-                    cond(item) and treater.send(func(item))
-                else:
-                    func(item)
-
-        return _handler()
+        return Corutine(self._func, self._cond, self._sink)
 
     def __init__(self, func, cond):
         self._sink = list()
         self._cond = cond
         self._func = func
-
-
-class Apply(PipelineCell):
-    def __init__(self, func):
-        super().__init__(func=func, cond=lambda x: True)
-
-
-class Filter(PipelineCell):
-    def __init__(self, cond):
-        super().__init__(cond=cond, func=lambda x: x)
-
-
-class Printer(PipelineCell):
-    def __init__(self, msg):
-        super().__init__(func=lambda x: print(msg, x), cond=lambda x: True)
