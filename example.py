@@ -19,5 +19,5 @@ def is_prime(n):
 
 source = Source(numbers())
 
-pipe0 = source >> Filter(is_prime)
-source.run()
+pipe0 = source >> Filter(is_prime) >> Printer("Prime number")
+source.emit()
