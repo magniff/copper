@@ -1,7 +1,8 @@
+from multiprocessing import cpu_count
 from concurrent.futures import ThreadPoolExecutor
 
 
-pool = ThreadPoolExecutor(8)
+pool = ThreadPoolExecutor(cpu_count())
 
 
 def coroutine(func):

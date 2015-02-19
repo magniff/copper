@@ -6,16 +6,8 @@ def numbers():
     n = 0
     while 1:
         yield n
-        sleep(0.1)
+        sleep(0.01)
         n += 1
-
-
-def delay(time):
-    def _delay(x):
-        sleep(time)
-        return x
-
-    return _delay
 
 
 def is_prime(n):
@@ -27,18 +19,26 @@ def is_prime(n):
     return j != 1
 
 
+def sum_digits(n):
+    s = 0
+    while n:
+        s += n % 10
+        n //= 10
+    return s
+
+
 #dummy data emitter
 source = Source(numbers())
 
-# Lets fork source
-pipe0 = source >> Filter(lambda x: not x%7) >> Apply(lambda x: x**2)
-pipe1 = source >> Apply(lambda x: x**3) >> Apply(lambda x: x+10)
+# now 'primes' is a stream of prime numbers
+primes = source >> Filter(is_prime)
 
-# ok, lets pipe pipe1 object to Printer
-pipe1 >> Printer('I am pipe1')
+# this stream contains sums of digits of prime numbers
+digit_sums = primes >> Apply(sum_digits)
 
-# lets fork pipe0
-pipe0 >> Printer('I am pipe00')
-pipe0 >> Apply(lambda x: x-3) >> Printer('I am pipe01')
+# lets classify them )
+digit_sums >> Filter(lambda x: x%2) >> Printer('not even sum:')
+digit_sums >> Filter(lambda x: not x%2) >> Printer('even sum')
+digit_sums >> Filter(is_prime) >> Printer('prime sum')
 
 source.emit()
