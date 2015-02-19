@@ -1,4 +1,5 @@
-from .internals import PipelineCell, Source
+from .pipe import PipelineCell
+from .source import Source
 
 
 class Apply(PipelineCell):

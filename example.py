@@ -28,7 +28,7 @@ def is_prime(n):
 
 source = Source(numbers())
 
-source >> Apply(lambda x: x**2) >> Printer('pipe1')
+source >> Filter(is_prime) >> Apply(lambda x: x**2) >> Printer('pipe1')
 source >> Apply(lambda x: x**3) >> Printer('pipe2')
 
 source.emit()
