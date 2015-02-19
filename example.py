@@ -6,6 +6,7 @@ def numbers():
     n = 0
     while 1:
         yield n
+        sleep(0.1)
         n += 1
 
 
@@ -26,9 +27,18 @@ def is_prime(n):
     return j != 1
 
 
+#dummy data emitter
 source = Source(numbers())
 
-source >> Filter(is_prime) >> Apply(lambda x: x**2) >> Printer('pipe1')
-source >> Apply(lambda x: x**3) >> Printer('pipe2')
+# Lets fork source
+pipe0 = source >> Filter(lambda x: not x%7) >> Apply(lambda x: x**2)
+pipe1 = source >> Apply(lambda x: x**3) >> Apply(lambda x: x+10)
+
+# ok, lets pipe pipe1 object to Printer
+pipe1 >> Printer('I am pipe1')
+
+# lets fork pipe0
+pipe0 >> Printer('I am pipe00')
+pipe0 >> Apply(lambda x: x-3) >> Printer('I am pipe01')
 
 source.emit()
