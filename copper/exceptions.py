@@ -1,0 +1,2 @@
+class SourceDepleted(Exception):
+    pass

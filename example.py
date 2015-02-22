@@ -1,12 +1,10 @@
-from time import sleep
-from copper import Source, Filter, Printer, Apply
+from copper import Source, Filter, Printer, Apply, mainloop
 
 
-def numbers():
-    n = 0
+def nums():
+    n=0
     while 1:
         yield n
-        sleep(0.01)
         n += 1
 
 
@@ -19,26 +17,12 @@ def is_prime(n):
     return j != 1
 
 
-def sum_digits(n):
-    s = 0
-    while n:
-        s += n % 10
-        n //= 10
-    return s
+source = Source(nums())
+stream0_squares = source.add_sink(Apply(lambda x: x**2))
+stream0_cubes = source.add_sink(Apply(lambda x: x**2))
 
+source.add_sink(Printer('origin'))
+stream0_squares.add_sink(Printer('squares'))
+stream0_cubes.add_sink(Printer('cubes'))
 
-#dummy data emitter
-source = Source(numbers())
-
-# now 'primes' is a stream of prime numbers
-primes = source >> Filter(is_prime)
-
-# this stream contains sums of digits of prime numbers
-digit_sums = primes >> Apply(sum_digits)
-
-# lets classify them )
-digit_sums >> Filter(lambda x: x%2) >> Printer('not even sum:')
-digit_sums >> Filter(lambda x: not x%2) >> Printer('even sum')
-digit_sums >> Filter(is_prime) >> Printer('prime sum')
-
-source.emit()
+mainloop.run()
