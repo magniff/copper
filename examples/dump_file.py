@@ -1,5 +1,5 @@
 """
-This is simple example of streaming yo file.
+This is simple example of streaming to file.
 Use pipe node File.
 """
 

@@ -1,6 +1,6 @@
 """
 This code produces a stream of fibonacci numbers.
-Implemets following stream:
+Implements following stream:
 
 source --------> fib ---> Delay ----> Apply0 ---> Print
                   ^               |
@@ -15,7 +15,7 @@ import time
 import sys
 sys.path.insert(0, os.path.abspath('.'))
 
-from copper import Source, Printer, Apply, File, mainloop
+from copper import Source, Printer, Apply, mainloop
 
 
 def delay(t):
@@ -35,6 +35,5 @@ source >> fib
 fib >> fib
 fib_ready = fib >> Apply(lambda x: x[1])
 fib_ready >> Printer('fib')
-fib_ready >> File('fib.txt')
 
 mainloop.run()

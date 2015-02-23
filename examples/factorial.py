@@ -1,8 +1,8 @@
 """
-This code recoursivly calculates factorial for each nubmer from inp stream.
-Implemets following stream:
+This code recursively calculates factorial for each nubmer from inp stream.
+Implements following stream:
 
-source ----> _factorial ---> filter0 ---> filter1 ---> Apply0 ---> Print
+source ----> _factorial ---> filter0 ---> filter1 ---> Unpack ---> Print
                   ^                   |
                   |                   |
                   --------------------
