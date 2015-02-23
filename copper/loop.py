@@ -19,9 +19,12 @@ class Mainloop:
             while cls._queue:
                 pipe, message = cls._queue.popleft()
                 result = pipe.func(message)
-                if pipe.cond(result):
-                    for sink in pipe.sinks:
-                        sink.send(result)
+
+                if not pipe.cond(result):
+                    continue
+
+                for sink in pipe.sinks:
+                    sink.send(result)
 
             try:
                 cls.source.emit()

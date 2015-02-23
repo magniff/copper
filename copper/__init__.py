@@ -3,30 +3,53 @@ from .loop import Mainloop as mainloop
 from .frontend import RShiftMixin
 
 
-class Apply(ProcessingNode, RShiftMixin):
+class ShiftableProcessingNode(ProcessingNode, RShiftMixin):
+    """Add support for '>>' (as known as right shift) operator as pipe.
+    """
+    pass
+
+
+class Apply(ShiftableProcessingNode):
+    """Applyes function func to stream.
+    """
     def __init__(self, func):
         super().__init__(func=func, cond=lambda x: True)
 
 
-class Filter(ProcessingNode, RShiftMixin):
+class Filter(ShiftableProcessingNode):
+    """Filters stream by predicate cond
+    """
     def __init__(self, cond):
         super().__init__(cond=cond, func=lambda x: x)
 
 
-class Printer(ProcessingNode, RShiftMixin):
+class Printer(ShiftableProcessingNode):
+    """Writes stream to console.
+    Should be done as subclass of File?
+    """
     def __init__(self, msg):
         super().__init__(func=lambda x: print(msg, x), cond=lambda x: True)
 
 
-class File(ProcessingNode, RShiftMixin):
+class File(ShiftableProcessingNode):
+    """Writes stream to file.
+    """
+    def __init__(self, filename, buff_len=100):
+        self._buffer = []
 
-    def __init__(self, filename):
         def _dump_to_file(value):
-            with open(filename, 'a') as f:
-                f.write('%s\n' % str(value))
+            if len(self._buffer) <= buff_len:
+                self._buffer.append(value)
+            else:
+                with open(filename, 'a') as f:
+                    f.write('\n'.join(map(str, self._buffer)))
+
+                self._buffer = []
 
         super().__init__(func=_dump_to_file, cond=lambda x: True)
 
 
-class Source(BaseSource, RShiftMixin):
+class Source(ShiftableProcessingNode):
+    """Wrap your data stream iterator with Source to be able to use pipes.
+    """
     pass
