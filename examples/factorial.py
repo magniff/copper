@@ -12,13 +12,12 @@ source ----> _factorial ---> filter0 ---> filter1 ---> Apply0 ---> Print
 import os
 import sys
 sys.path.insert(0, os.path.abspath('.'))
-print(sys.path)
 
 from copper import Source, Filter, Printer, Apply, mainloop
 
 
 def inp():
-    for i in range(20):
+    for i in range(10):
         yield (i+1, 1, 1)
 
 
