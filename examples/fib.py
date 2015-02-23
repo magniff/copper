@@ -15,7 +15,7 @@ import time
 import sys
 sys.path.insert(0, os.path.abspath('.'))
 
-from copper import Source, Printer, Apply, mainloop
+from copper import Source, Printer, Apply, File, mainloop
 
 
 def delay(t):
@@ -32,7 +32,9 @@ def inp():
 source = Source(inp())
 fib = Apply(lambda x: (x[1], x[0]+x[1]))
 source >> fib
-fib >> Apply(delay(0.2)) >> fib
-fib >> Apply(lambda x: x[1]) >> Printer('fib')
+fib >> fib
+fib_ready = fib >> Apply(lambda x: x[1])
+fib_ready >> Printer('fib')
+fib_ready >> File('fib.txt')
 
 mainloop.run()
