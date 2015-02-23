@@ -32,7 +32,7 @@ def inp():
 source = Source(inp())
 fib = Apply(lambda x: (x[1], x[0]+x[1]))
 source >> fib
-fib >> fib
+fib >> Apply(delay(0.2)) >> fib
 fib_ready = fib >> Apply(lambda x: x[1])
 fib_ready >> Printer('fib')
 

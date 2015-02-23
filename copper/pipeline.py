@@ -6,8 +6,8 @@ class BasePipelineNode:
 
     def add_sink(self, sink):
         if not isinstance(sink, ProcessingNode):
-            raise RuntimeError(
-                'Object %s must be an instance of ProcessingNode.'
+            raise TypeError(
+                'Object %s must be an instance of ProcessingNode.' % sink
             )
 
         self.sinks.append(sink)
