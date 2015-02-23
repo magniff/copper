@@ -22,7 +22,7 @@ class BasePipelineNode:
         self.mainloop = mainloop
 
 
-class Source(BasePipelineNode):
+class BaseSource(BasePipelineNode):
 
     def __init__(self, iterator):
         super().__init__()
@@ -33,7 +33,6 @@ class Source(BasePipelineNode):
         try:
             new_value = next(self.iterator)
         except StopIteration:
-            self.close_sinks()
             raise SourceDepleted()
         else:
             for sink in self.sinks:

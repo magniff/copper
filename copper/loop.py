@@ -25,8 +25,9 @@ class Mainloop:
 
             try:
                 cls.source.emit()
-            except SourceDepleted:
+            except SourceDepleted as e:
                 cls._is_running = False
+                print(e.value)
 
     @classmethod
     def add(cls, pipe_cell, message):
