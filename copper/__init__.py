@@ -49,7 +49,7 @@ class File(ShiftableProcessingNode):
         super().__init__(func=_dump_to_file, cond=lambda x: True)
 
 
-class Source(ShiftableProcessingNode):
+class Source(BaseSource, RShiftMixin):
     """Wrap your data stream iterator with Source to be able to use pipes.
     """
     pass
