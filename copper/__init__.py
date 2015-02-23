@@ -34,7 +34,7 @@ class Printer(ShiftableProcessingNode):
 class File(ShiftableProcessingNode):
     """Writes stream to file.
     """
-    def __init__(self, filename, buff_len=100):
+    def __init__(self, filename, buff_len=1):
         self._buffer = []
 
         def _dump_to_file(value):
