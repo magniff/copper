@@ -8,11 +8,6 @@ source ----> _factorial ---> filter0 ---> filter1 ---> Unpack ---> Print
                   --------------------
 
 """
-
-import os
-import sys
-sys.path.insert(0, os.path.abspath('.'))
-
 from copper import Source, Filter, Printer, Apply, mainloop
 
 

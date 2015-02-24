@@ -10,11 +10,7 @@ source --------> fib ---> Delay ----> Apply0 ---> Print
 Note, that extra delay applied.
 """
 
-import os
 import time
-import sys
-sys.path.insert(0, os.path.abspath('.'))
-
 from copper import Source, Printer, Apply, mainloop
 
 

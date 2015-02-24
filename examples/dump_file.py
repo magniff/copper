@@ -3,10 +3,6 @@ This is simple example of streaming to file.
 Use pipe node File.
 """
 
-import os
-import sys
-sys.path.insert(0, os.path.abspath('.'))
-
 from copper import Source, File, mainloop
 
 
