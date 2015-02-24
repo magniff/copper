@@ -17,15 +17,8 @@ class Mainloop:
 
         while cls._is_running:
             while cls._queue:
-                pipe, message = cls._queue.popleft()
-                result = pipe.func(message)
-
-                if not pipe.cond(result):
-                    continue
-
-                for sink in pipe.sinks:
-                    sink.send(result)
-
+                coroutine, value = cls._queue.popleft()
+                coroutine.send(value)
             try:
                 cls.source.emit()
             except SourceDepleted as e:

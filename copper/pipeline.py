@@ -1,5 +1,6 @@
-from .loop import Mainloop as mainloop
+from .common import coroutine
 from .exceptions import SourceDepleted
+from .loop import Mainloop as mainloop
 
 
 class BasePipelineNode:
@@ -10,12 +11,8 @@ class BasePipelineNode:
                 'Object %s must be an instance of ProcessingNode.' % sink
             )
 
-        self.sinks.append(sink)
+        self.sinks.append(sink._make_coroutine())
         return sink
-
-    def close_sinks(self):
-        for sink in self.sinks:
-            sink.close()
 
     def __init__(self):
         self.sinks = []
@@ -41,10 +38,28 @@ class BaseSource(BasePipelineNode):
 
 class ProcessingNode(BasePipelineNode):
 
-    def send(self, message):
-        self.mainloop.add(self, message)
+    def _make_coroutine(self):
+
+        @coroutine
+        def _coroutine():
+            func = self.function
+            re_emit = self.reemit_condition
+            consumers = self.sinks
+
+            while True:
+                value = yield
+                result = func(value)
+
+                if not re_emit(result):
+                    continue
+
+                for consumer in consumers:
+                    self.mainloop.add(consumer, result)
+
+        return _coroutine()
 
     def __init__(self, func, cond):
         super().__init__()
-        self.func = func
-        self.cond = cond
+        self.function = func
+        self.reemit_condition = cond
+        self.coroutine = self._make_coroutine()
