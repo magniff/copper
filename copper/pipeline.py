@@ -11,7 +11,7 @@ class BasePipelineNode:
                 'Object %s must be an instance of ProcessingNode.' % sink
             )
 
-        self.sinks.append(sink._make_coroutine())
+        self.sinks.append(sink.make_coroutine())
         return sink
 
     def __init__(self):
@@ -38,10 +38,11 @@ class BaseSource(BasePipelineNode):
 
 class ProcessingNode(BasePipelineNode):
 
-    def _make_coroutine(self):
+    def make_coroutine(self):
 
         @coroutine
         def _coroutine():
+            # cache some handy stuff as local variables
             func = self.function
             re_emit = self.reemit_condition
             consumers = self.sinks
@@ -62,4 +63,3 @@ class ProcessingNode(BasePipelineNode):
         super().__init__()
         self.function = func
         self.reemit_condition = cond
-        self.coroutine = self._make_coroutine()
