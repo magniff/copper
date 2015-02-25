@@ -1,5 +1,4 @@
 from collections import deque
-from .exceptions import SourceDepleted
 
 
 class Mainloop:
@@ -8,22 +7,16 @@ class Mainloop:
     _is_running = True
 
     @classmethod
-    def register_source(cls, source):
-        cls.source = source
-
-    @classmethod
-    def run(cls):
-        cls.source.emit()
+    def run(cls, source):
+        source.emit()
 
         while cls._is_running:
+
             while cls._queue:
-                coroutine, value = cls._queue.popleft()
-                coroutine.send(value)
-            try:
-                cls.source.emit()
-            except SourceDepleted as e:
-                cls._is_running = False
-                print(e.value)
+                task, value = cls._queue.popleft()
+                task.coroutine.send(value)
+
+            source.emit()
 
     @classmethod
     def add(cls, pipe_cell, message):
