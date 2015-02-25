@@ -2,7 +2,7 @@
 This code recursively calculates factorial for each nubmer from inp stream.
 Implements following stream:
 
-source ----> _factorial ---> filter0 ---> filter1 ---> Unpack ---> Print
+source ----> _factorial ---> filter0 ---> filter1 ---> Unpack ---> StdOut
                   ^                   |
                   |                   |
                   --------------------

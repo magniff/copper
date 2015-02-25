@@ -3,26 +3,6 @@ import sys
 from .base import BaseProcessingNode
 
 
-class _WriterMixin:
-
-    def _prepare_function(self, function):
-        _, writers, *_ = self._select()
-        if self._file_object in writers:
-            return lambda arg: function('%s\n' % arg) and None
-        else:
-            return lambda arg: None
-
-
-class _ReaderMixin:
-
-    def _prepare_function(self, function):
-        readers, *_ = self._select()
-        if self._file_object in readers:
-            return function
-        else:
-            return lambda arg: None
-
-
 class BaseIONode(BaseProcessingNode):
 
     read = set()
@@ -39,15 +19,29 @@ class BaseIONode(BaseProcessingNode):
         return select.select(__class__.read, __class__.write, __class__.err)
 
 
-class StdOut(BaseIONode, _WriterMixin):
+class BaseFileWriter(BaseIONode):
 
-    def __init__(self):
-        self._file_object = sys.stdout
+    def _prepare_function(self, function):
+        _, writers, *_ = self._select()
+        if self._file_object in writers:
+            return lambda arg: function('%s\n' % arg) and None
+        else:
+            return lambda arg: None
+
+    def __init__(self, file_object):
+        self._file_object = file_object
         self._add_writer(self._file_object)
         super().__init__(self._file_object.write)
 
 
-class StdIn(BaseIONode, _ReaderMixin):
+class BaseFileReader(BaseIONode):
+
+    def _prepare_function(self, function):
+        readers, *_ = self._select()
+        if self._file_object in readers:
+            return function
+        else:
+            return lambda arg: None
 
     def __init__(self):
         self._file_object = sys.stdin
@@ -55,9 +49,19 @@ class StdIn(BaseIONode, _ReaderMixin):
         super().__init__(self._file_object.read)
 
 
-class FileWriter(BaseIONode, _WriterMixin):
+class StdOut(BaseFileWriter):
+
+    def __init__(self):
+        super().__init__(sys.stdout)
+
+
+class StdIn(BaseFileReader):
+
+    def __init__(self):
+        super().__init__(sys.stdin)
+
+
+class FSFileWriter(BaseFileWriter):
 
     def __init__(self, path):
-        self._file_object = open(path, 'w')
-        self._add_writer(self._file_object)
-        super().__init__(self._file_object.write)
+        super().__init__(open(path, 'w'))

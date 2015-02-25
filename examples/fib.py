@@ -2,7 +2,7 @@
 This code produces a stream of fibonacci numbers.
 Implements following stream:
 
-source --------> fib ---> Delay ----> Apply0 ---> Print
+source --------> fib ---> Delay ----> Apply0 ---> StdOut
                   ^               |
                   |               |
                   ----------------
