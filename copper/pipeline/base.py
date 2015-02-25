@@ -1,8 +1,9 @@
 from ..loop import Mainloop as mainloop
 from ..common import coroutine
+from ..frontend import RShiftMixin
 
 
-class BasePipelineNode:
+class BasePipelineNode(RShiftMixin):
 
     def add_sink(self, sink):
         if not isinstance(sink, __class__):
@@ -36,8 +37,9 @@ class BaseSource(BasePipelineNode):
 
 class BaseProcessingNode(BasePipelineNode):
 
-    def _prepare_function(self, function):
-        return NotImplementedError('Implement method _prepare_function().')
+    def __init__(self, function):
+        super().__init__()
+        self.coroutine = self._build_coroutine(function)
 
     def _build_coroutine(self, function):
         function = self._prepare_function(function)
@@ -55,7 +57,3 @@ class BaseProcessingNode(BasePipelineNode):
 
     def send(self, value):
         self.mainloop.add(self, value)
-
-    def __init__(self, function):
-        super().__init__()
-        self.coroutine = self._build_coroutine(function)

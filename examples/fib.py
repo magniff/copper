@@ -11,7 +11,7 @@ Note, that extra delay applied.
 """
 
 import time
-from copper import Source, Printer, Apply, mainloop
+from copper import Source, StdOut, Apply, mainloop
 
 
 def delay(t):
@@ -30,6 +30,6 @@ fib = Apply(lambda x: (x[1], x[0]+x[1]))
 source >> fib
 fib >> Apply(delay(0.2)) >> fib
 fib_ready = fib >> Apply(lambda x: x[1])
-fib_ready >> Printer()
+fib_ready >> StdOut()
 
 mainloop.run(source)

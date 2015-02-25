@@ -14,9 +14,6 @@ def match_word(callback):
             word = []
 
 
-source = Source(iter('hello world 123ddd test'))
+source = Source(iter('hello world atatat '))
 source >> FSM(match_word) >> Printer()
-
-
-
 mainloop.run(source)
