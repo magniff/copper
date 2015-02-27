@@ -3,9 +3,11 @@
 Copper is a simple implementation of dataflow pipes (like python generator based 'pipes' module). However instead of generators is uses coroutines.
 See examples, the code is strait forward as hell.
 
+Works on Linux machines, win is not supported.
+
 To run examples install copper in develop mode:
 ```sh
-python .\setup.py develop
+python setup.py develop
 ```
 Then, for instance:
 ```sh
