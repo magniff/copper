@@ -1,9 +1,13 @@
-from ..loop import Mainloop as mainloop
+#this garanties that we are using correct mainlopp
+from copper import mainloop
+
 from ..common import coroutine
 from ..frontend import RShiftMixin
 
 
 class BasePipelineNode(RShiftMixin):
+
+    mainloop = mainloop
 
     def add_sink(self, sink):
         if not isinstance(sink, __class__):
@@ -15,8 +19,7 @@ class BasePipelineNode(RShiftMixin):
         return sink
 
     def __init__(self):
-        self.sinks = []
-        self.mainloop = mainloop
+        self.sinks = list()
 
 
 class BaseSource(BasePipelineNode):
@@ -25,7 +28,7 @@ class BaseSource(BasePipelineNode):
         try:
             data_from_source = next(self.emitter)
         except StopIteration:
-            mainloop._is_running = False
+            self.mainloop._is_running = False
         else:
             for sink in self.sinks:
                 sink.send(data_from_source)
@@ -47,8 +50,7 @@ class BaseProcessingNode(BasePipelineNode):
         @coroutine
         def _coroutine():
             while True:
-                value = yield
-                result = function(value)
+                result = function((yield))
                 if result is not None:
                     for consumer in self.sinks:
                         consumer.send(result)

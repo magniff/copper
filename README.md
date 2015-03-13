@@ -1,5 +1,7 @@
 ﻿# COPPER
 
+Available on linux only.
+
 Copper is a simple implementation of dataflow pipes (like python generator based 'pipes' module). However instead of generators is uses coroutines.
 See examples, the code is strait forward as hell.
 

@@ -1,22 +1,23 @@
 import select
 import sys
+
 from .base import BaseProcessingNode
 
 
 class BaseIONode(BaseProcessingNode):
 
-    read = set()
-    write = set()
-    err = set()
+    READERS = set()
+    WRITERS = set()
+    ERROR = set()
 
     def _add_reader(self, file_object):
-        __class__.read.add(file_object)
+        __class__.READERS.add(file_object)
 
     def _add_writer(self, file_object):
-        __class__.write.add(file_object)
+        __class__.WRITERS.add(file_object)
 
     def _select(self):
-        return select.select(__class__.read, __class__.write, __class__.err)
+        return select.select(__class__.READERS, __class__.WRITERS, __class__.ERROR)
 
 
 class BaseFileWriter(BaseIONode):
