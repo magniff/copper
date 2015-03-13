@@ -1,7 +1,7 @@
 import select
 import sys
 
-from .base import BaseProcessingNode
+from copper.pipeline.nodes_base import BaseProcessingNode
 
 
 class BaseIONode(BaseProcessingNode):

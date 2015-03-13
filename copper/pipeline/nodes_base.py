@@ -21,22 +21,7 @@ class BasePipelineNode(RShiftMixin):
     def __init__(self):
         self.sinks = list()
 
-
-class BaseSource(BasePipelineNode):
-
-    def emit(self):
-        try:
-            data_from_source = next(self.emitter)
-        except StopIteration:
-            self.mainloop._is_running = False
-        else:
-            for sink in self.sinks:
-                sink.send(data_from_source)
-
-    def __init__(self, iterator):
-        super().__init__()
-        self.emitter = iterator
-
+        
 
 class BaseProcessingNode(BasePipelineNode):
 

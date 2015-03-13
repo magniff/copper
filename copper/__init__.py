@@ -5,7 +5,7 @@ from .pipeline import (
     FSFileWriter,
     Filter,
     FSM,
-    Source,
+    IteratorBasedSource,
     StdIn,
     StdOut,
 )

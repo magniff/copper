@@ -8,10 +8,10 @@ source ----> _factorial ---> filter0 ---> filter1 ---> Unpack ---> StdOut
                   --------------------
 
 """
-from copper import Source, Filter, StdOut, Apply, mainloop
+from copper import IteratorBasedSource, Filter, StdOut, Apply, mainloop
 
 
-source = Source(((i+1, 1, 1) for i in range(100)))
+source = IteratorBasedSource(((i+1, 1, 1) for i in range(100)))
 
 _factorial = Apply(lambda value: (value[0], value[1]+1, value[2]*value[1]))
 source >> _factorial

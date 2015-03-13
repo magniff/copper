@@ -1,6 +1,5 @@
 from ..common import coroutine
-
-from .base import BaseProcessingNode, BaseSource
+from .nodes_base import BaseProcessingNode
 
 
 class PathThroughNode(BaseProcessingNode):
@@ -41,9 +40,3 @@ class Filter(PathThroughNode):
     """
     def __init__(self, filter_pred):
         super().__init__(lambda x: x if filter_pred(x) else None)
-
-
-class Source(BaseSource):
-    """Wrap your data stream iterator with Source to be able to use pipes.
-    """
-    pass

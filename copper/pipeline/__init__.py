@@ -1,4 +1,3 @@
-from .pipeline import FSM, Apply, Filter, Source
-from .io import StdIn, StdOut, FSFileWriter
-
-from concurrent import futures
+from .nodes_processing import FSM, Apply, Filter
+from .nodes_io import StdIn, StdOut, FSFileWriter
+from .nodes_source import IteratorBasedSource
