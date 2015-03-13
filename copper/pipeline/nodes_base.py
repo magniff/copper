@@ -12,7 +12,9 @@ class BasePipelineNode(RShiftMixin):
     def add_sink(self, sink):
         if not isinstance(sink, __class__):
             raise TypeError(
-                'Object %s must be an instance of ProcessingNode.' % sink
+                'Object %s must be an instance of %s.' % (
+                    sink, __class__.__name__
+                )
             )
 
         self.sinks.append(sink)
@@ -21,9 +23,24 @@ class BasePipelineNode(RShiftMixin):
     def __init__(self):
         self.sinks = list()
 
-        
 
-class BaseProcessingNode(BasePipelineNode):
+class BaseEmitter(BasePipelineNode):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+        self.emitter = self._build_emitter(*args, **kwargs)
+
+    def emit(self):
+        try:
+            data_from_source = next(self.emitter)
+        except StopIteration:
+            self.mainloop.sources.remove(self)
+        else:
+            for sink in self.sinks:
+                sink.send(data_from_source)
+
+
+class BaseReEmitter(BasePipelineNode):
 
     def __init__(self, function):
         super().__init__()

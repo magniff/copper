@@ -11,7 +11,7 @@ Note, that extra delay applied.
 """
 
 import time
-from copper import Source, StdOut, Apply, mainloop
+from copper import IteratorBasedSource, StdOut, Apply, mainloop
 
 
 def delay(t):
@@ -25,11 +25,11 @@ def inp():
     yield (1, 1)
 
 
-source = Source(inp())
+source = IteratorBasedSource(inp())
 fib = Apply(lambda x: (x[1], x[0]+x[1]))
 source >> fib
 fib >> Apply(delay(0.2)) >> fib
 fib_ready = fib >> Apply(lambda x: x[1])
-fib_ready >> StdOut()
+fib_ready >> Apply(lambda line: '%s\n' % line) >> StdOut()
 
 mainloop.run(source)

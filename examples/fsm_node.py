@@ -1,5 +1,5 @@
 from string import ascii_letters
-from copper import Source, StdOut, FSM, mainloop
+from copper import IteratorBasedSource, StdOut, FSM, mainloop
 
 
 def match_word(callback):
@@ -14,6 +14,6 @@ def match_word(callback):
             word = []
 
 
-source = Source(iter('hello world atatat '))
+source = IteratorBasedSource(iter('hello world atatat '))
 source >> FSM(match_word) >> StdOut()
 mainloop.run(source)

@@ -1,13 +1,13 @@
 from ..common import coroutine
-from .nodes_base import BaseProcessingNode
+from .nodes_base import BaseReEmitter
 
 
-class PathThroughNode(BaseProcessingNode):
+class PathThroughNode(BaseReEmitter):
     def _prepare_function(self, function):
         return function
 
 
-class FSM(BaseProcessingNode):
+class FSM(BaseReEmitter):
 
     def fsm_callback(self, value):
         self._fsm_data = value

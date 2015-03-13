@@ -1,10 +1,10 @@
 import select
 import sys
 
-from copper.pipeline.nodes_base import BaseProcessingNode
+from .nodes_base import BaseReEmitter, BaseEmitter
 
 
-class BaseIONode(BaseProcessingNode):
+class BaseIONode:
 
     READERS = set()
     WRITERS = set()
@@ -17,15 +17,17 @@ class BaseIONode(BaseProcessingNode):
         __class__.WRITERS.add(file_object)
 
     def _select(self):
-        return select.select(__class__.READERS, __class__.WRITERS, __class__.ERROR)
+        return select.select(
+            __class__.READERS, __class__.WRITERS, __class__.ERROR
+        )
 
 
-class BaseFileWriter(BaseIONode):
+class BaseFileWriter(BaseReEmitter, BaseIONode):
 
     def _prepare_function(self, function):
         _, writers, *_ = self._select()
         if self._file_object in writers:
-            return lambda arg: function('%s\n' % arg) and None
+            return lambda arg: function(arg) and None
         else:
             return lambda arg: None
 
@@ -35,19 +37,25 @@ class BaseFileWriter(BaseIONode):
         super().__init__(self._file_object.write)
 
 
-class BaseFileReader(BaseIONode):
+class BaseFileReader(BaseEmitter, BaseIONode):
 
-    def _prepare_function(self, function):
-        readers, *_ = self._select()
-        if self._file_object in readers:
-            return function
-        else:
-            return lambda arg: None
+    def _build_emitter(self, file_object):
+        def _generator():
+            while True:
+                readers, *_ = self._select()
+                if file_object in readers:
+                    line = file_object.readline()
+                    if not line:
+                        file_object.close()
+                        self.mainloop.sources.remove(self)
+                    yield line
 
-    def __init__(self):
-        self._file_object = sys.stdin
+        return _generator()
+
+    def __init__(self, file_object):
+        self._file_object = file_object
         self._add_reader(self._file_object)
-        super().__init__(self._file_object.read)
+        super().__init__(file_object)
 
 
 class StdOut(BaseFileWriter):
@@ -66,3 +74,9 @@ class FSFileWriter(BaseFileWriter):
 
     def __init__(self, path):
         super().__init__(open(path, 'w'))
+
+
+class FSFileReader(BaseFileReader):
+
+    def __init__(self, path):
+        super().__init__(open(path, 'r'))

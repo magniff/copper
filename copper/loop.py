@@ -21,23 +21,26 @@ class BaseMainloop(metaclass=LoopMeta):
     def add(cls, pipe_cell, message):
         cls._queue.append((pipe_cell, message))
 
-    @classmethod
-    def run(cls):
-        cls._is_running = True
-
-
 
 class Mainloop(BaseMainloop):
 
     @classmethod
-    def run(cls, source):
-        super().run()
-        
-        source.emit()
+    def wake_sources(cls):
+        for source in cls.sources:
+            source.emit()
+
+        return bool(cls.sources)
+
+    @classmethod
+    def run(cls, *source_list):
+        cls.sources = list(source_list)
+        cls.wake_sources()
+
+        cls._is_running = True
         while cls._is_running:
 
             while cls._queue:
                 task, value = cls._queue.popleft()
                 task.coroutine.send(value)
 
-            source.emit()
+            cls._is_running = cls.wake_sources()
