@@ -1,7 +1,7 @@
-from copper import StdIn, StdOut, mainloop
+from copper import StdIn, OutLines, mainloop
 
 
 source = StdIn()
-source >> StdOut()
+source >> OutLines()
 
 mainloop.run(source)

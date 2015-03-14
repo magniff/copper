@@ -10,3 +10,6 @@ from .pipeline import (
     StdIn,
     StdOut,
 )
+
+
+from .macro import OutLines, SplitBy

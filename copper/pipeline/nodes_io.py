@@ -4,7 +4,7 @@ import sys
 from .nodes_base import BaseReEmitter, BaseEmitter
 
 
-class BaseIONode:
+class BaseIOMixin:
 
     READERS = set()
     WRITERS = set()
@@ -22,7 +22,7 @@ class BaseIONode:
         )
 
 
-class BaseFileWriter(BaseReEmitter, BaseIONode):
+class BaseFileWriter(BaseReEmitter, BaseIOMixin):
 
     def _prepare_function(self, function):
         _, writers, *_ = self._select()
@@ -37,7 +37,7 @@ class BaseFileWriter(BaseReEmitter, BaseIONode):
         super().__init__(self._file_object.write)
 
 
-class BaseFileReader(BaseEmitter, BaseIONode):
+class BaseFileReader(BaseEmitter, BaseIOMixin):
 
     def _build_emitter(self, file_object):
         def _generator():

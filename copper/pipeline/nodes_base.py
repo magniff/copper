@@ -1,4 +1,4 @@
-#this garanties that we are using correct mainlopp
+# this garanties that we are using correct mainloop
 from copper import mainloop
 
 from ..common import coroutine
