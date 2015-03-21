@@ -1,11 +1,10 @@
 """
 This is simple example of streaming to file.
-Use pipe node File.
 """
 
-from copper import IteratorBasedSource, FSFileWriter, mainloop
+from copper import IteratorBasedSource, OutLines, FSFileWriter, mainloop
 
 
 source = IteratorBasedSource(iter(range(100)))
-source >> FSFileWriter('data.txt')
+source >> OutLines(FSFileWriter('data.txt'))
 mainloop.run(source)

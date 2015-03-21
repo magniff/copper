@@ -51,11 +51,13 @@ class BaseReEmitter(BasePipelineNode):
 
         @coroutine
         def _coroutine():
-            while True:
+            while 1:
                 result = function((yield))
-                if result is not None:
-                    for consumer in self.sinks:
-                        consumer.send(result)
+                if result is None:
+                    continue
+
+                for consumer in self.sinks:
+                    consumer.send(result)
 
         return _coroutine()
 

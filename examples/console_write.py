@@ -1,14 +1,7 @@
-from copper import IteratorBasedSource, StdOut, Apply, mainloop
+from copper import IteratorBasedSource, Apply, Filter, OutLines, mainloop
 
 
-def OutLines(klass):
-    line_maker = Apply(lambda line: str(line)+'\n')
-    line_maker >> klass()
-    return line_maker
-
-
-source = IteratorBasedSource(iter(range(10)))
-source >> OutLines(StdOut)
-
+source = IteratorBasedSource(range(100))
+source >> Apply(lambda x: x**2+1) >> Filter(lambda x: x % 7) >> OutLines()
 
 mainloop.run(source)

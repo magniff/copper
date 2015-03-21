@@ -3,8 +3,7 @@ from .nodes_base import BaseReEmitter
 
 
 class PathThroughNode(BaseReEmitter):
-    def _prepare_function(self, function):
-        return function
+    _prepare_function = lambda self, func: func
 
 
 class FSM(BaseReEmitter):
@@ -12,15 +11,16 @@ class FSM(BaseReEmitter):
     def fsm_callback(self, value):
         self._fsm_data = value
 
-    def _prepare_function(self, fsm_coroutine):
-        fsm_coroutine = coroutine(fsm_coroutine)(self.fsm_callback)
+    # coro is genobject
+    def _prepare_function(self, coro):
+        fsm_coroutine = coroutine(coro)(self.fsm_callback)
 
         def _handler(value):
             self._fsm_data = None
+            # this code changes self._fsm_data
             fsm_coroutine.send(value)
 
-            if self._fsm_data is not None:
-                return self._fsm_data
+            return self._fsm_data
 
         return _handler
 

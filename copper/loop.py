@@ -13,16 +13,11 @@ class LoopMeta(type):
         return loop
 
 
-class BaseMainloop(metaclass=LoopMeta):
-
-    BASE = True
+class Mainloop(metaclass=LoopMeta):
 
     @classmethod
     def add(cls, pipe_cell, message):
         cls._queue.append((pipe_cell, message))
-
-
-class Mainloop(BaseMainloop):
 
     @classmethod
     def wake_sources(cls):
