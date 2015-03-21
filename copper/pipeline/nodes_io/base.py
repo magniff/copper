@@ -22,11 +22,11 @@ class BaseIOMixin:
 class BaseFileWriter(BaseReEmitter, BaseIOMixin):
 
     def _prepare_function(self, function):
-        _, writers, *_ = self._select()
-        if self._file_object in writers:
-            return lambda arg: function(arg)
-        else:
-            return lambda arg: None
+        def _writer(arg):
+            _, writers, *_ = self._select()
+            return function(arg) if self._file_object in writers else None
+
+        return _writer
 
     def __init__(self, file_object):
         self._file_object = file_object
@@ -40,13 +40,16 @@ class BaseFileReader(BaseEmitter, BaseIOMixin):
         def _generator():
             while True:
                 readers, *_ = self._select()
+
+                # todo: fix 100% processor consumption when waiting stdin
                 if file_object not in readers:
-                    continue
+                    yield
 
                 line = file_object.readline()
                 if not line:
                     file_object.close()
                     self.mainloop.sources.remove(self)
+
                 yield line
 
         return _generator()

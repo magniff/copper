@@ -36,8 +36,9 @@ class BaseEmitter(BasePipelineNode):
         except StopIteration:
             self.mainloop.sources.remove(self)
         else:
-            for sink in self.sinks:
-                sink.send(data_from_source)
+            if data_from_source is not None:
+                for sink in self.sinks:
+                    sink.send(data_from_source)
 
 
 class BaseReEmitter(BasePipelineNode):

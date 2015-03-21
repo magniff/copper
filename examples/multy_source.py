@@ -12,6 +12,6 @@ sources = [
     )
 ]
 
-Bundle(sink=Apply(lambda line: 'data: '+line), *sources) >> OutLines(StdOut())
+Bundle(sink=Apply(lambda line: 'data: '+line), *sources) >> OutLines()
 
 mainloop.run(*sources)
